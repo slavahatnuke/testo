@@ -97,14 +97,14 @@ class XDocumentBuilder implements XDocumentBuilderInterface
                 }
 
                 if (!$block_mode) {
-                    $doc = new XDocument(new XStringSource($line));
+                    $doc = new XDocument(new XStringSource($line)); // TestoLineSource
                     $this->base_builder->build($doc);
                     $document->add($doc);
                 }
 
                 if ($this->isTestoBlockEnd($line)) {
 
-                    $doc = new XDocument(new XStringSource(join($this->line_separator, $block)));
+                    $doc = new XDocument(new XStringSource(join($this->line_separator, $block))); // TestoBlockSource
                     $this->base_builder->build($doc);
                     $document->add($doc);
 
