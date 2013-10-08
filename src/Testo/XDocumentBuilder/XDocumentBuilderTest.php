@@ -78,6 +78,32 @@ class XDocumentBuilderTest extends \PHPUnit_Framework_TestCase {
 
     }
 
+
+    /**
+     * @test
+     */
+    public function buildTestoBlock()
+    {
+        $base_builder = $this->newBuilder();
+
+        $content = "@testo some-block { \n\n some code \n \n @testo }";
+
+        $doc = $this->newDocumentWithContent($content);
+
+        $builder = new XDocumentBuilder($base_builder);
+
+        $that = $this;
+
+        $doc->expects($this->once())
+            ->method('add')
+            ->will($this->returnCallback(function($doc) use ($that, $content) {
+                $that->assertSame($content, $doc->getSource()->getContent());
+            }));
+
+        $builder->build($doc);
+
+    }
+
     /**
      * @param $content
      * @return \PHPUnit_Framework_MockObject_MockObject

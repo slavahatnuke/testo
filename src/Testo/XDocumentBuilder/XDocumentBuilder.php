@@ -3,7 +3,6 @@
 
 namespace Testo\XDocumentBuilder;
 
-
 use Testo\XDocument\XDocument;
 use Testo\XDocument\XDocumentInterface;
 use Testo\XSource\XFileSource;
@@ -13,6 +12,12 @@ class XDocumentBuilder implements XDocumentBuilderInterface
 {
 
     protected $testo_tag = '/@testo\s+/';
+
+    protected $testo_block_start = '/@testo.*?{/';
+
+    protected $testo_block_end = '/@testo.*?}/';
+    
+    protected $line_separator = "\n";
 
     /**
      * @var XDocumentBuilderInterface
@@ -26,7 +31,8 @@ class XDocumentBuilder implements XDocumentBuilderInterface
 
     public function supports(XDocumentInterface $document)
     {
-        return $document->getSource() instanceof XFileSource;
+        return $document->getSource() instanceof XDocumentBuilderInterface
+        && !($document->getSource() instanceof XStringSource);
     }
 
 
@@ -41,7 +47,7 @@ class XDocumentBuilder implements XDocumentBuilderInterface
      */
     protected function extractLines(XDocumentInterface $document)
     {
-        return explode("\n", $document->getSource()->getContent());
+        return explode($this->line_separator, $document->getSource()->getContent());
     }
 
     /**
@@ -53,20 +59,61 @@ class XDocumentBuilder implements XDocumentBuilderInterface
     }
 
     /**
+     * @param $text
+     */
+    protected function isTestoBlockStart($text)
+    {
+        return preg_match($this->testo_block_start, $text);
+    }
+
+    /**
+     * @param $text
+     */
+    protected function isTestoBlockEnd($text)
+    {
+        return preg_match($this->testo_block_end, $text);
+    }
+
+    /**
      * @param XDocumentInterface $document
      */
     protected function buildDocument(XDocumentInterface $document)
     {
+
+        $block_mode = false;
+        $block = [];
+
         foreach ($this->extractLines($document) as $line) {
+
+            if ($block_mode) {
+                $block[] = $line;
+            }
 
             if ($this->isTestoLine($line)) {
 
-                $doc = new XDocument(new XStringSource($line));
-                $this->base_builder->build($doc);
+                if ($this->isTestoBlockStart($line)) {
+                    $block_mode = true;
+                    $block[] = $line;
+                    continue;
+                }
 
-                $document->add($doc);
+                if (!$block_mode) {
+                    $doc = new XDocument(new XStringSource($line));
+                    $this->base_builder->build($doc);
+                    $document->add($doc);
+                }
 
-            } else {
+                if ($this->isTestoBlockEnd($line)) {
+
+                    $doc = new XDocument(new XStringSource(join($this->line_separator, $block)));
+                    $this->base_builder->build($doc);
+                    $document->add($doc);
+
+                    $block_mode = false;
+                    $block = [];
+                }
+
+            } else if (!$block_mode) {
                 $document->add($line);
             }
         }
