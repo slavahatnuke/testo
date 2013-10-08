@@ -94,7 +94,6 @@ class XDocumentBuilder implements XDocumentBuilderInterface
                 if ($this->isTestoBlockStart($line)) {
                     $block_mode = true;
                     $block[] = $line;
-                    continue;
                 }
 
                 if (!$block_mode) {
@@ -112,6 +111,7 @@ class XDocumentBuilder implements XDocumentBuilderInterface
                     $block_mode = false;
                     $block = [];
                 }
+
 
             } else if (!$block_mode) {
                 $document->add($line);
