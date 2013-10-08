@@ -11,6 +11,8 @@ class XDocumentBuilderTest extends \PHPUnit_Framework_TestCase {
      */
     public function build()
     {
+        $base_builder = $this->newBuilder();
+
         $doc = $this->getMock('Testo\XDocument\XDocumentInterface');
 
         $source = $this->getMock('Testo\XSource\XSourceInterface');
@@ -24,44 +26,23 @@ class XDocumentBuilderTest extends \PHPUnit_Framework_TestCase {
             ->will($this->returnValue(''));
 
 
-        $builder = new XDocumentBuilder();
+        $builder = new XDocumentBuilder($base_builder);
         $builder->build($doc);
     }
 
-    /**
-     * @test
-     */
-    public function buildWithSubBuilders()
-    {
-        $doc = $this->newDocument();
-
-        $builder = new XDocumentBuilder();
-        $sub_builder = $this->getMock('Testo\XDocumentBuilder\XDocumentBuilder');
-
-        $sub_builder->expects($this->once())
-            ->method('supports')
-            ->with($doc)
-            ->will($this->returnValue(true));
-
-        $sub_builder->expects($this->once())
-            ->method('build')
-            ->with($doc);
-
-        $builder->addBuilder($sub_builder);
-
-        $builder->build($doc);
-    }
 
     /**
      * @test
      */
     public function buildTextLines()
     {
+        $base_builder = $this->newBuilder();
+
         $content = 'some-line';
 
         $doc = $this->newDocumentWithContent($content);
 
-        $builder = new XDocumentBuilder();
+        $builder = new XDocumentBuilder($base_builder);
 
         $doc->expects($this->once())
             ->method('add')
@@ -77,16 +58,20 @@ class XDocumentBuilderTest extends \PHPUnit_Framework_TestCase {
      */
     public function buildTestoLines()
     {
+        $base_builder = $this->newBuilder();
+
         $content = '@testo some-tag';
 
         $doc = $this->newDocumentWithContent($content);
 
-        $builder = new XDocumentBuilder();
+        $builder = new XDocumentBuilder($base_builder);
 
+        $that = $this;
+        
         $doc->expects($this->once())
             ->method('add')
-            ->will($this->returnCallback(function($arg){
-                $a=1;
+            ->will($this->returnCallback(function($doc) use ($that, $content) {
+                $that->assertSame($content, $doc->getSource()->getContent());
             }));
 
         $builder->build($doc);
@@ -120,5 +105,13 @@ class XDocumentBuilderTest extends \PHPUnit_Framework_TestCase {
     protected function newDocument()
     {
         return $this->getMock('Testo\XDocument\XDocumentInterface');
+    }
+
+    /**
+     * @return \PHPUnit_Framework_MockObject_MockObject
+     */
+    protected function newBuilder()
+    {
+        return $this->getMock('Testo\XDocumentBuilder\XDocumentBuilderInterface');
     }
 }

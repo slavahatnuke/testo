@@ -6,43 +6,33 @@ namespace Testo\XDocumentBuilder;
 
 use Testo\XDocument\XDocument;
 use Testo\XDocument\XDocumentInterface;
+use Testo\XSource\XFileSource;
 use Testo\XSource\XStringSource;
 
 class XDocumentBuilder implements XDocumentBuilderInterface
 {
 
+    protected $testo_tag = '/@testo\s+/';
+
     /**
-     * @var array|XDocumentBuilderInterface[]
+     * @var XDocumentBuilderInterface
      */
-    protected $builders = [];
+    protected $base_builder;
 
-    protected $testo_tag = '/^@testo\s+$/';
-
-    protected $testo_block_open = '/@testo.*?{/';
-
-    protected $testo_block_close = '/@testo.*?}/';
-
-    public function addBuilder(XDocumentBuilderInterface $builder)
+    public function __construct(XDocumentBuilderInterface $base_builder)
     {
-        $this->builders[] = $builder;
+        $this->base_builder = $base_builder;
     }
 
     public function supports(XDocumentInterface $document)
     {
-        return true;
+        return $document->getSource() instanceof XFileSource;
     }
+
 
     public function build(XDocumentInterface $document)
     {
-
-        foreach ($this->builders as $builder) {
-            if ($builder->supports($document)) {
-                return $builder->build($document);
-            }
-        }
-
         $this->buildDocument($document);
-
     }
 
     /**
@@ -62,23 +52,6 @@ class XDocumentBuilder implements XDocumentBuilderInterface
         return preg_match($this->testo_tag, $text);
     }
 
-//
-//    /**
-//     * @param $text
-//     */
-//    protected function isTestoBlockOpen($text)
-//    {
-//        return preg_match($this->testo_block_open, $text);
-//    }
-//
-//    /**
-//     * @param $text
-//     */
-//    protected function isTestoBlockClose($text)
-//    {
-//        return preg_match($this->testo_block_close, $text);
-//    }
-
     /**
      * @param XDocumentInterface $document
      */
@@ -89,7 +62,7 @@ class XDocumentBuilder implements XDocumentBuilderInterface
             if ($this->isTestoLine($line)) {
 
                 $doc = new XDocument(new XStringSource($line));
-//                $this->build($doc);
+                $this->base_builder->build($doc);
 
                 $document->add($doc);
 
