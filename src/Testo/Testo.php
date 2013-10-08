@@ -67,40 +67,38 @@ class Testo implements RootDirAwareInterface
             $line = $documentLines[$i];
             $document[] = $line;
 
-            foreach ($this->sources as $source) {
+            if ($source = $this->getSourceForLine($line)) {
+
 
                 $content = $source->getContent(rtrim($line, "\n{ "));
+                $content = $this->filterContent($content);
 
-                if (is_array($content)) {
+                $block = '';
+                $i++;
 
-                    $content = $this->filterContent($content);
-
-                    $block = '';
+                while (!$this->isEndBlockTag($documentLines[$i])) {
+                    $block .= $documentLines[$i];
                     $i++;
-
-                    while (!$this->isEndBlockTag($documentLines[$i])) {
-                        $block .= $documentLines[$i];
-                        $i++;
-                    }
-
-                    $endBlockLine = $documentLines[$i];
-                    $parsedHash = $this->parseHashFromEndBlockLine($endBlockLine);
-
-                    if (!$this->isBlockValid($block, $parsedHash)) {
-                        throw new \LogicException(sprintf(
-                            "Block changed externally\n\nFile is '%s'\nLine is '%s'\nCode is '%s'",
-                            $documentFile,
-                            $line,
-                            $block
-                        ));
-                    }
-
-                    $code = $this->unShiftCode(implode($content));
-
-                    $document[] = $code;
-                    $document[] = $this->getEndTag($this->hash($code));
                 }
+
+                $endBlockLine = $documentLines[$i];
+                $parsedHash = $this->parseHashFromEndBlockLine($endBlockLine);
+
+                if (!$this->isBlockValid($block, $parsedHash)) {
+                    throw new \LogicException(sprintf(
+                        "Block changed externally\n\nFile is '%s'\nLine is '%s'\nCode is '%s'",
+                        $documentFile,
+                        $line,
+                        $block
+                    ));
+                }
+
+                $code = $this->unShiftCode(implode($content));
+
+                $document[] = $code;
+                $document[] = $this->getEndTag($this->hash($code));
             }
+
         }
 
         file_put_contents($documentFile, implode('', $document));
@@ -204,5 +202,23 @@ class Testo implements RootDirAwareInterface
             $content = $filter->filter($content);
         }
         return $content;
+    }
+
+    /**
+     * @param $line
+     */
+    protected function getSourceForLine($line)
+    {
+        foreach ($this->sources as $source) {
+
+            $content = $source->getContent(rtrim($line, "\n{ "));
+
+            if (is_array($content)) {
+                return $source;
+            }
+
+        }
+
+        return false;
     }
 }
