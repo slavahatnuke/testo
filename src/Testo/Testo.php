@@ -82,17 +82,9 @@ class Testo implements RootDirAwareInterface
                     $i++;
                 }
 
-                $endBlockLine = $documentLines[$i];
-                $parsedHash = $this->parseHashFromEndBlockLine($endBlockLine);
+                $line = $documentLines[$i];
 
-                if (!$this->isBlockValid($block, $parsedHash)) {
-                    throw new LogicException(sprintf(
-                        "Block changed externally\n\nFile is '%s'\nLine is '%s'\nCode is '%s'",
-                        $documentFile,
-                        $line,
-                        $block
-                    ));
-                }
+                $this->validateCodeHash($documentFile, $line, $block);
 
                 $code = $this->unShiftCode(implode($content));
 
@@ -210,6 +202,7 @@ class Testo implements RootDirAwareInterface
      */
     protected function getSourceForLine($line)
     {
+
         foreach ($this->sources as $source) {
 
             $content = $source->getContent(rtrim($line, "\n{ "));
@@ -221,5 +214,19 @@ class Testo implements RootDirAwareInterface
         }
 
         return false;
+    }
+
+    protected function validateCodeHash($documentFile, $line, $block)
+    {
+        $parsedHash = $this->parseHashFromEndBlockLine($line);
+
+        if (!$this->isBlockValid($block, $parsedHash)) {
+            throw new LogicException(sprintf(
+                "Block changed externally\n\nFile is '%s'\nLine is '%s'\nCode is '%s'",
+                $documentFile,
+                $line,
+                $block
+            ));
+        }
     }
 }
