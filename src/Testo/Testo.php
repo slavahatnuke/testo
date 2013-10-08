@@ -10,6 +10,9 @@ use Testo\Source\FileSource;
 use Testo\Source\MethodSource;
 use Testo\Source\RootDirAwareInterface;
 use Testo\Source\SourceInterface;
+use Testo\XDocument\XDocument;
+use Testo\XDocumentBuilder\XDocumentBuilder;
+use Testo\XSource\XFileSource;
 
 class Testo implements RootDirAwareInterface
 {
@@ -57,6 +60,13 @@ class Testo implements RootDirAwareInterface
      */
     public function generate($documentFile)
     {
+
+        $document = new XDocument(new XFileSource($documentFile));
+
+        $builder = new XDocumentBuilder();
+        $builder->build($document);
+
+
         $this->rootDir = dirname($documentFile);
 
         $document = array();
