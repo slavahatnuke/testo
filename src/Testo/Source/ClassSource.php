@@ -18,6 +18,7 @@ class ClassSource implements SourceInterface
         $placeholders = array();
         if (preg_match($this->classTagRegExp, $line, $placeholders)) {
             $className = $placeholders[1];
+
             try {
                 $rc = new \ReflectionClass($className);
 

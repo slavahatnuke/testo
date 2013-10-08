@@ -60,23 +60,32 @@ class Testo implements RootDirAwareInterface
 
         $document = array();
         $documentLines = file($documentFile);
+
+
         for ($i = 0, $n = count($documentLines); $i < $n; $i++) {
+
             $line = $documentLines[$i];
             $document[] = $line;
+
             foreach ($this->sources as $source) {
+
                 $content = $source->getContent(rtrim($line, "\n{ "));
+
                 if (is_array($content)) {
-                    foreach ($this->filters as $filter) {
-                        $content = $filter->filter($content);
-                    }
+
+                    $content = $this->filterContent($content);
+
                     $block = '';
                     $i++;
+
                     while (!$this->isEndBlockTag($documentLines[$i])) {
                         $block .= $documentLines[$i];
                         $i++;
                     }
+
                     $endBlockLine = $documentLines[$i];
                     $parsedHash = $this->parseHashFromEndBlockLine($endBlockLine);
+
                     if (!$this->isBlockValid($block, $parsedHash)) {
                         throw new \LogicException(sprintf(
                             "Block changed externally\n\nFile is '%s'\nLine is '%s'\nCode is '%s'",
@@ -85,7 +94,9 @@ class Testo implements RootDirAwareInterface
                             $block
                         ));
                     }
+
                     $code = $this->unShiftCode(implode($content));
+
                     $document[] = $code;
                     $document[] = $this->getEndTag($this->hash($code));
                 }
@@ -104,6 +115,7 @@ class Testo implements RootDirAwareInterface
     {
         $code = trim($code, "\n") . "\n";
         $placeholders = array();
+
         if (preg_match('/^(\s*?)[^\s]/', $code, $placeholders)) {
             $code = preg_replace("/^$placeholders[1]/", '', $code);
             $code = str_replace("\n$placeholders[1]", "\n", $code);
@@ -180,5 +192,17 @@ class Testo implements RootDirAwareInterface
         }
 
         return $this->hash($block) == $validHash;
+    }
+
+    /**
+     * @param $content
+     * @return array
+     */
+    protected function filterContent($content)
+    {
+        foreach ($this->filters as $filter) {
+            $content = $filter->filter($content);
+        }
+        return $content;
     }
 }
