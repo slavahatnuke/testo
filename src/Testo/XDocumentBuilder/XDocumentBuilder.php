@@ -5,7 +5,6 @@ namespace Testo\XDocumentBuilder;
 
 use Testo\XDocument\XDocument;
 use Testo\XDocument\XDocumentInterface;
-use Testo\XSource\XFileSource;
 use Testo\XSource\XStringSource;
 
 class XDocumentBuilder implements XDocumentBuilderInterface
