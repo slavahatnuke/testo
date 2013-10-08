@@ -44,7 +44,7 @@ class TestoTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @test
-     * @expectedException \LogicException
+     * @expectedException \Testo\Exception\LogicException
      * @expectedExceptionMessage Block changed externally
      */
     public function shouldThrowExternalBlockChangeExceptionIfHashIsInvalid()
