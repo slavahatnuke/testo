@@ -16,7 +16,7 @@ class XDocumentBuilder implements XDocumentBuilderInterface
      */
     protected $builders = [];
 
-    protected $testo_tag = '/@testo\s+/';
+    protected $testo_tag = '/^(.*)@testo\s+(.*)$/';
 
     protected $testo_block_open = '/@testo.*?{/';
 
@@ -36,11 +36,9 @@ class XDocumentBuilder implements XDocumentBuilderInterface
     {
 
         foreach ($this->builders as $builder) {
-
             if ($builder->supports($document)) {
                 return $builder->build($document);
             }
-
         }
 
         $this->buildDocument($document);
@@ -63,22 +61,22 @@ class XDocumentBuilder implements XDocumentBuilderInterface
     {
         return preg_match($this->testo_tag, $text);
     }
-
-    /**
-     * @param $text
-     */
-    protected function isTestoBlockOpen($text)
-    {
-        return preg_match($this->testo_block_open, $text);
-    }
-
-    /**
-     * @param $text
-     */
-    protected function isTestoBlockClose($text)
-    {
-        return preg_match($this->testo_block_close, $text);
-    }
+//
+//    /**
+//     * @param $text
+//     */
+//    protected function isTestoBlockOpen($text)
+//    {
+//        return preg_match($this->testo_block_open, $text);
+//    }
+//
+//    /**
+//     * @param $text
+//     */
+//    protected function isTestoBlockClose($text)
+//    {
+//        return preg_match($this->testo_block_close, $text);
+//    }
 
     /**
      * @param XDocumentInterface $document
