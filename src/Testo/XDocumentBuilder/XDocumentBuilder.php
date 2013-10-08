@@ -16,7 +16,7 @@ class XDocumentBuilder implements XDocumentBuilderInterface
      */
     protected $builders = [];
 
-    protected $testo_tag = '/^(.*)@testo\s+(.*)$/';
+    protected $testo_tag = '/^@testo\s+$/';
 
     protected $testo_block_open = '/@testo.*?{/';
 
@@ -61,6 +61,7 @@ class XDocumentBuilder implements XDocumentBuilderInterface
     {
         return preg_match($this->testo_tag, $text);
     }
+
 //
 //    /**
 //     * @param $text
