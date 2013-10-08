@@ -8,9 +8,15 @@
     "require": {
         "php": ">=5.3.2"
     },
+    "require-dev": {
+      "hot/phpunit-runner": "dev-master"
+    },
     "autoload": {
         "psr-0": {
             "Testo": "src/"
         }
+    },
+    "config": {
+      "bin-dir": "bin"
     }
 }
