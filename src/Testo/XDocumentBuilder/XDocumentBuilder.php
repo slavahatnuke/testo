@@ -60,7 +60,7 @@ class XDocumentBuilder implements XDocumentBuilderInterface
 
                 $tag = new Tag($line);
 
-                if (Tag::isBlockStart($line)) {
+                if ($tag->isStartBlock()) {
                     $block_mode = true;
                     $block_tag = $tag;
                 }
@@ -72,7 +72,7 @@ class XDocumentBuilder implements XDocumentBuilderInterface
                     $document->add($doc);
                 }
 
-                if (Tag::isBlockEnd($line)) {
+                if ($tag->isEndBlock()) {
 
                     $source = new XStringSource(join($this->line_separator, $block));
                     $doc = new XTagDocument($block_tag, $source, $tag);

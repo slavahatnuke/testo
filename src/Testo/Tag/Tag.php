@@ -9,9 +9,9 @@ class Tag implements TagInterface
 
     static protected $testo_tag = '/@testo\s+(.*)/';
 
-    static protected $testo_block_start = '/@testo.*?{/';
+    static protected $testo_start_block = '/@testo.*?{/';
 
-    static protected $testo_block_end = '/@testo.*?}/';
+    static protected $testo_end_block = '/@testo.*?}/';
 
     /**
      * @param $text
@@ -24,17 +24,17 @@ class Tag implements TagInterface
     /**
      * @param $text
      */
-    static public function isBlockStart($text)
+    public function isStartBlock()
     {
-        return preg_match(self::$testo_block_start, $text) ? true : false;
+        return preg_match(self::$testo_start_block, $this->content) ? true : false;
     }
 
     /**
      * @param $text
      */
-    static public function isBlockEnd($text)
+    public function isEndBlock()
     {
-        return preg_match(self::$testo_block_end, $text) ? true : false;
+        return preg_match(self::$testo_end_block, $this->content) ? true : false;
     }
 
 

@@ -11,15 +11,9 @@ interface TagInterface
      */
     static public function isTag($text);
 
-    /**
-     * @param $text
-     */
-    static public function isBlockStart($text);
+    public function isStartBlock();
 
-    /**
-     * @param $text
-     */
-    static public function isBlockEnd($text);
+    public function isEndBlock();
 
 
     public function getContent();

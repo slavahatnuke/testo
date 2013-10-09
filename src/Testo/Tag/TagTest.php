@@ -30,11 +30,17 @@ class TagTest extends \PHPUnit_Framework_TestCase {
      */
     public function isBlockStart()
     {
-        $this->assertTrue(Tag::isBlockStart('@testo {'));
-        $this->assertTrue(Tag::isBlockStart('@testo any words {'));
+        $tag = new Tag('@testo {');
+        $this->assertTrue($tag->isStartBlock());
 
-        $this->assertFalse(Tag::isBlockStart('@testo '));
-        $this->assertFalse(Tag::isBlockStart('@testo any words'));
+        $tag = new Tag('@testo any words {');
+        $this->assertTrue($tag->isStartBlock());
+
+        $tag = new Tag('@testo ');
+        $this->assertFalse($tag->isStartBlock());
+
+        $tag = new Tag('@testo any words');
+        $this->assertFalse($tag->isStartBlock());
     }
 
 
@@ -43,11 +49,17 @@ class TagTest extends \PHPUnit_Framework_TestCase {
      */
     public function isBlockEnd()
     {
-        $this->assertTrue(Tag::isBlockEnd('@testo }'));
-        $this->assertTrue(Tag::isBlockEnd('@testo any words }'));
+        $tag = new Tag('@testo }');
+        $this->assertTrue($tag->isEndBlock());
 
-        $this->assertFalse(Tag::isBlockEnd('@testo '));
-        $this->assertFalse(Tag::isBlockEnd('@testo any words'));
+        $tag = new Tag('@testo any words }');
+        $this->assertTrue($tag->isEndBlock());
+
+        $tag = new Tag('@testo ');
+        $this->assertFalse($tag->isEndBlock('@testo '));
+
+        $tag = new Tag('@testo any words');
+        $this->assertFalse($tag->isEndBlock('@testo any words'));
     }
 
     /**
