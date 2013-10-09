@@ -58,17 +58,4 @@ class XTagDocument extends XDocument
         return $this->end_tag;
     }
 
-    protected function convert(array $result)
-    {
-        $result_with_tags = $result;
-        array_unshift($result_with_tags, $this->getTag());
-
-        if ($this->getEndTag()) {
-            $result_with_tags[] = $this->getEndTag();
-        }
-
-        return parent::convert($result_with_tags);
-    }
-
-
 }

@@ -15,6 +15,8 @@ interface TagInterface
 
     public function isEndBlock();
 
+    public function isBlock();
+
 
     public function getContent();
 

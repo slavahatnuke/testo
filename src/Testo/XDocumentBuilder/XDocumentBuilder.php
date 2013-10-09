@@ -4,7 +4,6 @@
 namespace Testo\XDocumentBuilder;
 
 use Testo\Tag\Tag;
-use Testo\XDocument\XDocument;
 use Testo\XDocument\XDocumentInterface;
 use Testo\XDocument\XTagDocument;
 use Testo\XSource\XStringSource;
@@ -74,8 +73,10 @@ class XDocumentBuilder implements XDocumentBuilderInterface
 
                 if ($tag->isEndBlock()) {
 
-                    $source = new XStringSource(join($this->line_separator, $block));
-                    $doc = new XTagDocument($block_tag, $source, $tag);
+                    $doc = new XTagDocument(
+                        $block_tag,
+                        new XStringSource(join($this->line_separator, $block)),
+                        $tag);
 
                     $this->base_builder->build($doc);
                     $document->add($doc);

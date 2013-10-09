@@ -61,15 +61,7 @@ class XTagDocumentTest extends \PHPUnit_Framework_TestCase {
         $document = new XTagDocument($tag, null, $end_tag);
         $document->add('MY-LINE');
 
-        $tag->expects($this->once())
-            ->method('__toString')
-            ->will($this->returnValue('tag1'));
-
-        $end_tag->expects($this->once())
-            ->method('__toString')
-            ->will($this->returnValue('tag2'));
-
-        $this->assertSame("tag1\nMY-LINE\ntag2", (string)$document);
+        $this->assertSame("MY-LINE", (string)$document);
     }
 
     /**
@@ -82,10 +74,6 @@ class XTagDocumentTest extends \PHPUnit_Framework_TestCase {
         $document = new XTagDocument($tag);
         $document->add('MY-LINE');
 
-        $tag->expects($this->once())
-            ->method('__toString')
-            ->will($this->returnValue('tag1'));
-
-        $this->assertSame("tag1\nMY-LINE", (string)$document);
+        $this->assertSame("MY-LINE", (string)$document);
     }
 }

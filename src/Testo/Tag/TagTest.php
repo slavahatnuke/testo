@@ -65,6 +65,19 @@ class TagTest extends \PHPUnit_Framework_TestCase {
     /**
      * @test
      */
+    public function isBlock()
+    {
+        $tag = new Tag('@testo }');
+        $this->assertTrue($tag->isBlock());
+
+        $tag = new Tag('@testo ');
+        $this->assertFalse($tag->isBlock('@testo '));
+    }
+
+
+    /**
+     * @test
+     */
     public function testToString()
     {
         $content = 'xxx';

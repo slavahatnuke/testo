@@ -37,6 +37,10 @@ class Tag implements TagInterface
         return preg_match(self::$testo_end_block, $this->content) ? true : false;
     }
 
+    public function isBlock()
+    {
+        return $this->isStartBlock() || $this->isEndBlock();
+    }
 
     public function __construct($content)
     {
