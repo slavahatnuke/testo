@@ -42,6 +42,8 @@ class Testo implements RootDirAwareInterface
      */
     protected $rootDir;
 
+    protected $x_document;
+
     public function __construct()
     {
         $this->filters = array();
@@ -56,20 +58,21 @@ class Testo implements RootDirAwareInterface
     }
 
     /**
+     * @return mixed
+     */
+    public function getXDocument()
+    {
+        return $this->x_document;
+    }
+
+
+
+    /**
      * @param $documentFile
      * @throws LogicException
      */
     public function generate($documentFile)
     {
-
-        $document = new XDocument(new XFileSource($documentFile));
-
-        $builder = new XCompositeDocumentBuilder();
-        $builder->addBuilder(new XDocumentBuilder($builder));
-
-
-        $builder->build($document);
-
 
         $this->rootDir = dirname($documentFile);
 
@@ -242,5 +245,27 @@ class Testo implements RootDirAwareInterface
                 $block
             ));
         }
+    }
+
+    /**
+     * @param $documentFile
+     * @return XDocument
+     */
+    public function xGenerate($documentFile)
+    {
+        $document = new XDocument(new XFileSource($documentFile));
+
+        $builder = new XCompositeDocumentBuilder();
+        $builder->addBuilder(new XDocumentBuilder($builder));
+//        $builder->addBuilder(new XMethodSourceDocumentBuilder());
+
+
+        $builder->build($document);
+
+        $this->x_document = $document;
+
+        file_put_contents($documentFile, (string)$document);
+
+        return $document;
     }
 }

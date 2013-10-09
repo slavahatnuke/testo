@@ -1,0 +1,8 @@
+Some text
+Some text
+@testo Testo\Tests\x_files\Example helloWorld
+$helloWorld = new \HelloWorld;
+
+$helloWorld->say();
+Some text
+Some text
