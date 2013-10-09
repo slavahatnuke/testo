@@ -3,19 +3,15 @@
 
 namespace Testo\XDocumentBuilder;
 
+use Testo\Tag\Tag;
 use Testo\XDocument\XDocument;
 use Testo\XDocument\XDocumentInterface;
+use Testo\XDocument\XTagDocument;
 use Testo\XSource\XStringSource;
 
 class XDocumentBuilder implements XDocumentBuilderInterface
 {
 
-    protected $testo_tag = '/@testo\s+/';
-
-    protected $testo_block_start = '/@testo.*?{/';
-
-    protected $testo_block_end = '/@testo.*?}/';
-    
     protected $line_separator = "\n";
 
     /**
@@ -30,8 +26,7 @@ class XDocumentBuilder implements XDocumentBuilderInterface
 
     public function supports(XDocumentInterface $document)
     {
-        return $document->getSource() instanceof XDocumentBuilderInterface
-        && !($document->getSource() instanceof XStringSource);
+        return $document instanceof XDocumentInterface;
     }
 
 
@@ -50,71 +45,54 @@ class XDocumentBuilder implements XDocumentBuilderInterface
     }
 
     /**
-     * @param $text
-     */
-    protected function isTestoLine($text)
-    {
-        return preg_match($this->testo_tag, $text);
-    }
-
-    /**
-     * @param $text
-     */
-    protected function isTestoBlockStart($text)
-    {
-        return preg_match($this->testo_block_start, $text);
-    }
-
-    /**
-     * @param $text
-     */
-    protected function isTestoBlockEnd($text)
-    {
-        return preg_match($this->testo_block_end, $text);
-    }
-
-    /**
      * @param XDocumentInterface $document
      */
     protected function buildDocument(XDocumentInterface $document)
     {
 
         $block_mode = false;
+        $block_tag = null;
         $block = [];
 
         foreach ($this->extractLines($document) as $line) {
 
-            if ($block_mode) {
-                $block[] = $line;
-            }
+            if (Tag::isTag($line)) {
 
-            if ($this->isTestoLine($line)) {
+                $tag = new Tag($line);
 
-                if ($this->isTestoBlockStart($line)) {
+                if (Tag::isBlockStart($line)) {
                     $block_mode = true;
-                    $block[] = $line;
+                    $block_tag = $tag;
                 }
+
 
                 if (!$block_mode) {
-                    $doc = new XDocument(new XStringSource($line)); // TestoLineSource
+                    $doc = new XTagDocument($tag);
                     $this->base_builder->build($doc);
                     $document->add($doc);
                 }
 
-                if ($this->isTestoBlockEnd($line)) {
+                if (Tag::isBlockEnd($line)) {
 
-                    $doc = new XDocument(new XStringSource(join($this->line_separator, $block))); // TestoBlockSource
+                    $source = new XStringSource(join($this->line_separator, $block));
+                    $doc = new XTagDocument($block_tag, $source, $tag);
+
                     $this->base_builder->build($doc);
                     $document->add($doc);
 
+                    $block_tag = null;
                     $block_mode = false;
                     $block = [];
                 }
 
 
+            } else if ($block_mode) {
+                $block[] = $line;
             } else if (!$block_mode) {
                 $document->add($line);
             }
+
+
         }
     }
 

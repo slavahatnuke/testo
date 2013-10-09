@@ -3,16 +3,21 @@
 namespace Testo\XDocument;
 
 use Testo\XSource\XSourceInterface;
+use Testo\XSource\XStringSource;
 
 class XDocument implements XDocumentInterface {
-
 
     protected $source;
 
     protected $result = [];
     
-    public function __construct(XSourceInterface $source)
+    public function __construct(XSourceInterface $source = null)
     {
+
+        if (!$source) {
+            $source = new XStringSource();
+        }
+
         $this->source = $source;
     }
 
@@ -26,7 +31,7 @@ class XDocument implements XDocumentInterface {
 
     public function __toString()
     {
-        return join("\n", $this->result);
+        return $this->convert($this->result);
     }
 
     /**
@@ -35,6 +40,14 @@ class XDocument implements XDocumentInterface {
     public function add($text)
     {
         $this->result[] = $text;
+    }
+
+    /**
+     * @return string
+     */
+    protected function convert(array $result)
+    {
+        return join("\n", $result);
     }
 
 

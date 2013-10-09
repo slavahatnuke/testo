@@ -3,6 +3,8 @@
 namespace Testo\XDocument;
 
 
+use Testo\XSource\XStringSource;
+
 class XDocumentTest extends \PHPUnit_Framework_TestCase {
     /**
      * @test
@@ -14,12 +16,25 @@ class XDocumentTest extends \PHPUnit_Framework_TestCase {
         $document = new XDocument($source);
 
         $this->assertSame($source, $document->getSource());
+
+        $document = new XDocument();
+        $this->assertSame('', $document->getSource()->getContent());
     }
 
     /**
      * @test
      */
-    public function toString()
+    public function constructWithoutArguments()
+    {
+        $document = new XDocument();
+        $this->assertTrue($document->getSource() instanceof XStringSource);
+        $this->assertSame('', $document->getSource()->getContent());
+    }
+
+    /**
+     * @test
+     */
+    public function testToString()
     {
         $source = $this->getMock('\Testo\XSource\XSourceInterface');
         $document = new XDocument($source);
@@ -35,6 +50,7 @@ class XDocumentTest extends \PHPUnit_Framework_TestCase {
         $source = $this->getMock('\Testo\XSource\XSourceInterface');
         $document = new XDocument($source);
         $document->add('xxx');
+
 
         $this->assertSame('xxx', (string)$document);
 

@@ -16,4 +16,14 @@ class XStringSourceTest extends \PHPUnit_Framework_TestCase {
         $this->assertSame($content, $source->getContent());
         $this->assertSame($content, $source->getName());
     }
+
+    /**
+     * @test
+     */
+    public function constructWithoutArguments()
+    {
+        $source = new XStringSource();
+
+        $this->assertSame('', $source->getContent());
+    }
 }

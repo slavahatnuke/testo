@@ -8,7 +8,7 @@ class XStringSource implements XSourceInterface
 
     protected $content;
 
-    public function __construct($content)
+    public function __construct($content = '')
     {
         $this->content = $content;
     }

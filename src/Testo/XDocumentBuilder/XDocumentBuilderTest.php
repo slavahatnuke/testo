@@ -71,7 +71,7 @@ class XDocumentBuilderTest extends \PHPUnit_Framework_TestCase {
         $doc->expects($this->once())
             ->method('add')
             ->will($this->returnCallback(function($doc) use ($that, $content) {
-                $that->assertSame($content, $doc->getSource()->getContent());
+                $that->assertSame($content, (string)$doc);
             }));
 
         $builder->build($doc);
@@ -84,20 +84,22 @@ class XDocumentBuilderTest extends \PHPUnit_Framework_TestCase {
      */
     public function buildTestoBlock()
     {
-        $base_builder = $this->newBuilder();
 
-        $content = "@testo some-block { \n\n some code \n \n @testo }";
+        $base_builder = new XCompositeDocumentBuilder();
+
+        $content = "@testo some-block {\n\n some code \n \n@testo }";
 
         $doc = $this->newDocumentWithContent($content);
 
         $builder = new XDocumentBuilder($base_builder);
+        $base_builder->addBuilder($builder);
 
         $that = $this;
 
         $doc->expects($this->once())
             ->method('add')
             ->will($this->returnCallback(function($doc) use ($that, $content) {
-                $that->assertSame($content, $doc->getSource()->getContent());
+                $that->assertSame($content, (string)$doc);
             }));
 
         $builder->build($doc);
