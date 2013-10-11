@@ -71,4 +71,5 @@ class XCompositeDocumentBuilderTest extends \PHPUnit_Framework_TestCase {
 
         $builder->build($doc);
     }
+
 }

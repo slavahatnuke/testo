@@ -26,7 +26,8 @@ class XDocumentBuilderTest extends \PHPUnit_Framework_TestCase {
             ->will($this->returnValue(''));
 
 
-        $builder = new XDocumentBuilder($base_builder);
+        $builder = new XDocumentBuilder();
+        $builder->setBaseBuilder($base_builder);
         $builder->build($doc);
     }
 
@@ -42,7 +43,8 @@ class XDocumentBuilderTest extends \PHPUnit_Framework_TestCase {
 
         $doc = $this->newDocumentWithContent($content);
 
-        $builder = new XDocumentBuilder($base_builder);
+        $builder = new XDocumentBuilder();
+        $builder->setBaseBuilder($base_builder);
 
         $doc->expects($this->once())
             ->method('add')
@@ -64,7 +66,9 @@ class XDocumentBuilderTest extends \PHPUnit_Framework_TestCase {
 
         $doc = $this->newDocumentWithContent($content);
 
-        $builder = new XDocumentBuilder($base_builder);
+        $builder = new XDocumentBuilder();
+        $builder->setBaseBuilder($base_builder);
+
 
         $that = $this;
         

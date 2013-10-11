@@ -8,7 +8,7 @@ use Testo\XDocument\XDocumentInterface;
 use Testo\XDocument\XTagDocument;
 use Testo\XSource\XStringSource;
 
-class XDocumentBuilder implements XDocumentBuilderInterface
+class XDocumentBuilder implements XDocumentBuilderInterface, XAwareBaseDocumentBuilderInterface
 {
 
     protected $line_separator = "\n";
@@ -18,16 +18,26 @@ class XDocumentBuilder implements XDocumentBuilderInterface
      */
     protected $base_builder;
 
-    public function __construct(XDocumentBuilderInterface $base_builder)
-    {
-        $this->base_builder = $base_builder;
-    }
-
     public function supports(XDocumentInterface $document)
     {
         return $document instanceof XDocumentInterface;
     }
 
+    /**
+     * @param \Testo\XDocumentBuilder\XDocumentBuilderInterface $base_builder
+     */
+    public function setBaseBuilder(XDocumentBuilderInterface $base_builder)
+    {
+        $this->base_builder = $base_builder;
+    }
+
+    /**
+     * @return \Testo\XDocumentBuilder\XDocumentBuilderInterface
+     */
+    public function getBaseBuilder()
+    {
+        return $this->base_builder;
+    }
 
     public function build(XDocumentInterface $document)
     {
@@ -67,7 +77,7 @@ class XDocumentBuilder implements XDocumentBuilderInterface
 
                 if (!$block_mode) {
                     $doc = new XTagDocument($tag);
-                    $this->base_builder->build($doc);
+                    $this->getBaseBuilder()->build($doc);
                     $document->add($doc);
                 }
 
@@ -78,7 +88,7 @@ class XDocumentBuilder implements XDocumentBuilderInterface
                         new XStringSource(join($this->line_separator, $block)),
                         $tag);
 
-                    $this->base_builder->build($doc);
+                    $this->getBaseBuilder()->build($doc);
                     $document->add($doc);
 
                     $block_tag = null;

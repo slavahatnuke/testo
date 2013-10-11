@@ -19,6 +19,11 @@ class XCompositeDocumentBuilder implements XDocumentBuilderInterface
     public function addBuilder(XDocumentBuilderInterface $builder)
     {
         $this->builders[] = $builder;
+
+        if ($builder instanceof XAwareBaseDocumentBuilderInterface) {
+            $builder->setBaseBuilder($this);
+        }
+
     }
 
     public function supports(XDocumentInterface $document)

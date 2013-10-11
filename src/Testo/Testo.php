@@ -256,7 +256,7 @@ class Testo implements RootDirAwareInterface
         $document = new XDocument(new XFileSource($documentFile));
 
         $builder = new XCompositeDocumentBuilder();
-        $builder->addBuilder(new XDocumentBuilder($builder));
+        $builder->addBuilder(new XDocumentBuilder());
 //        $builder->addBuilder(new XMethodSourceDocumentBuilder());
 
 
