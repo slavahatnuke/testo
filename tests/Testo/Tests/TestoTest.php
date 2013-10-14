@@ -76,22 +76,25 @@ class TestoTest extends \PHPUnit_Framework_TestCase
 //            ),
         );
     }
-//
-//    /**
-//     * @test
-//     *
-//     * @dataProvider provideXTestData
-//     */
-//    public function shouldGenerateXDock($documentFile, $expectedFile)
-//    {
-//        $documentFileCopy = $documentFile . '~';
-//        copy($documentFile, $documentFileCopy);
-//
-//        $testo = new Testo();
-//        $testo->xGenerate($documentFileCopy);
-//
-//
-//        $this->assertFileEquals($expectedFile, $documentFileCopy);
-//        unlink($documentFileCopy);
-//    }
+
+    /**
+     * @test
+     *
+     * dataProvider provideXTestData
+     */
+    public function shouldGenerateXDock($documentFile = 1, $expectedFile = 1)
+    {
+        $documentFile = __DIR__ . '/x_files/without_spaces.tpl';
+        $expectedFile = __DIR__ . '/x_files/without_spaces.txt';
+
+        $documentFileCopy = $documentFile . '~';
+        copy($documentFile, $documentFileCopy);
+
+        $testo = new Testo();
+        $testo->xGenerate($documentFileCopy);
+
+
+        $this->assertFileEquals($expectedFile, $documentFileCopy);
+        unlink($documentFileCopy);
+    }
 }

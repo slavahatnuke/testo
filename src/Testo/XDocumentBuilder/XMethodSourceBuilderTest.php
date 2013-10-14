@@ -18,17 +18,15 @@ class XMethodSourceBuilderTest extends \PHPUnit_Framework_TestCase {
 
         $document = $this->getMock('Testo\XDocument\XTagDocumentInterface');
 
-        $source = $this->getMock('Testo\XSource\XStringSource');
-
-        $document->expects($this->once())
-            ->method('getSource')
-            ->will($this->returnValue($source));
-
         $tag = new Tag("@testo NS1\\NS11\\ClassName methodName");
 
         $document->expects($this->any())
             ->method('getTag')
             ->will($this->returnValue($tag));
+
+        $document->expects($this->any())
+            ->method('isEmpty')
+            ->will($this->returnValue(true));
 
         $this->assertTrue($builder->supports($document));
     }
@@ -39,6 +37,7 @@ class XMethodSourceBuilderTest extends \PHPUnit_Framework_TestCase {
     public function build()
     {
         $builder = new XMethodSourceBuilder();
+
         $base_builder = $this->getMock('Testo\XDocumentBuilder\XDocumentBuilderInterface');
         $builder->setBaseBuilder($base_builder);
 
@@ -52,9 +51,13 @@ class XMethodSourceBuilderTest extends \PHPUnit_Framework_TestCase {
 
         $that = $this;
 
-        $document->expects($this->once())
+        $document->expects($this->at(0))
+            ->method('add');
+
+
+        $document->expects($this->at(1))
             ->method('add')
-            ->will($this->returnCallback(function(XTagDocumentInterface $doc) use ($that, $tag){
+            ->will($this->returnCallback(function($doc) use ($that, $tag){
                 $that->assertSame($tag, $doc->getTag());
                 $that->assertTrue($doc->getSource() instanceof XMethodSource);
                 $this->assertContains('->say()', $doc->getSource()->getContent());

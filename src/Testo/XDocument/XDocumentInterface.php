@@ -2,8 +2,9 @@
 namespace Testo\XDocument;
 
 use Testo\XSource\XSourceInterface;
+use Traversable;
 
-interface XDocumentInterface {
+interface XDocumentInterface extends \IteratorAggregate{
 
     /**
      * @return XSourceInterface
@@ -16,5 +17,9 @@ interface XDocumentInterface {
      * @param String|XDocumentInterface $text
      */
     public function add($text);
+
+    public function getIterator();
+
+    public function isEmpty();
 
 }

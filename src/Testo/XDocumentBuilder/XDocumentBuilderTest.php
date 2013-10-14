@@ -4,6 +4,8 @@
 namespace Testo\XDocumentBuilder;
 
 
+use Testo\XDocument\XTagDocumentInterface;
+
 class XDocumentBuilderTest extends \PHPUnit_Framework_TestCase {
 
     /**
@@ -17,7 +19,7 @@ class XDocumentBuilderTest extends \PHPUnit_Framework_TestCase {
 
         $source = $this->getMock('Testo\XSource\XSourceInterface');
 
-        $doc->expects($this->once())
+        $doc->expects($this->exactly(2))
             ->method('getSource')
             ->will($this->returnValue($source));
 
@@ -71,10 +73,11 @@ class XDocumentBuilderTest extends \PHPUnit_Framework_TestCase {
 
 
         $that = $this;
-        
+
         $doc->expects($this->once())
             ->method('add')
-            ->will($this->returnCallback(function($doc) use ($that, $content) {
+            ->will($this->returnCallback(function(XTagDocumentInterface $doc) use ($that, $content) {
+                $that->assertSame($content, $doc->getTag()->getContent());
                 $that->assertSame('', (string)$doc);
             }));
 
@@ -83,64 +86,6 @@ class XDocumentBuilderTest extends \PHPUnit_Framework_TestCase {
     }
 
 
-    /**
-     * @test
-     */
-    public function buildTestoBlock()
-    {
-
-        $base_builder = new XCompositeDocumentBuilder();
-
-        $body = "\n some code \n ";
-        $content = "@testo some-block {\n{$body}\n@testo }";
-
-        $doc = $this->newDocumentWithContent($content);
-
-        $builder = new XDocumentBuilder($base_builder);
-        $base_builder->addBuilder($builder);
-
-        $that = $this;
-
-        $doc->expects($this->once())
-            ->method('add')
-            ->will($this->returnCallback(function($doc) use ($that, $content, $body) {
-                $that->assertSame($body, $doc->getSource()->getContent());
-                $that->assertSame($body, (string)$doc);
-            }));
-
-        $builder->build($doc);
-
-    }
-
-    /**
-     * @test
-     */
-    public function buildNestedTestoBlock()
-    {
-
-        $base_builder = new XCompositeDocumentBuilder();
-
-        $body = " some nested code ";
-        $nested_body = "\n some code \n@testo nested-block {\n{$body}\n@testo } \n ";
-        $content = "@testo some-block {\n{$nested_body}\n@testo }";
-
-        $doc = $this->newDocumentWithContent($content);
-
-        $builder = new XDocumentBuilder($base_builder);
-        $base_builder->addBuilder($builder);
-
-        $that = $this;
-
-        $doc->expects($this->at(1))
-            ->method('add')
-            ->will($this->returnCallback(function($doc) use ($that, $content, $nested_body) {
-                $that->assertSame($nested_body, $doc->getSource()->getContent());
-                $that->assertSame("\n some code \n some nested code \n ", (string)$doc);
-            }));
-
-        $builder->build($doc);
-
-    }
 
     /**
      * @param $content
@@ -152,7 +97,7 @@ class XDocumentBuilderTest extends \PHPUnit_Framework_TestCase {
 
         $source = $this->getMock('Testo\XSource\XSourceInterface');
 
-        $doc->expects($this->once())
+        $doc->expects($this->atLeastOnce())
             ->method('getSource')
             ->will($this->returnValue($source));
 

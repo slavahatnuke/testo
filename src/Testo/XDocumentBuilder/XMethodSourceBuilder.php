@@ -20,7 +20,7 @@ class XMethodSourceBuilder implements XDocumentBuilderInterface, XAwareBaseDocum
     public function supports(XDocumentInterface $document)
     {
         return $document instanceof XTagDocumentInterface
-        && $document->getSource() instanceof XStringSource
+        && $document->isEmpty()
         && !$document->getTag()->isBlock()
         && $document->getTag()->matchArgument(0, '/^[A-Z][\w]*/')
         && $document->getTag()->matchArgument(1, '/\w+/i');
@@ -57,6 +57,7 @@ class XMethodSourceBuilder implements XDocumentBuilderInterface, XAwareBaseDocum
             )
         );
 
+        $document->add((string)$document->getTag());
         $document->add($method_document);
 
         $this->getBaseBuilder()->build($method_document);

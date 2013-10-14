@@ -72,8 +72,9 @@ class XTagDocumentTest extends \PHPUnit_Framework_TestCase {
         $tag = $this->getMock('Testo\Tag\TagInterface');
 
         $document = new XTagDocument($tag);
-        $document->add('MY-LINE');
+        $this->assertSame("", (string)$document);
 
+        $document->add('MY-LINE');
         $this->assertSame("MY-LINE", (string)$document);
     }
 }

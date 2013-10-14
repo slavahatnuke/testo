@@ -5,25 +5,18 @@ namespace Testo\XDocument;
 use Testo\XSource\XSourceInterface;
 use Testo\XSource\XStringSource;
 
-class XDocument implements XDocumentInterface {
+class XDocument implements XDocumentInterface
+{
 
     protected $source;
 
     protected $result = [];
-    
+
     public function __construct(XSourceInterface $source = null)
     {
-
-        if (!$source) {
-            $source = new XStringSource();
-        }
-
         $this->source = $source;
     }
 
-    /**
-     * @inheritdoc
-     */
     public function getSource()
     {
         return $this->source;
@@ -31,7 +24,7 @@ class XDocument implements XDocumentInterface {
 
     public function __toString()
     {
-        return $this->convert($this->result);
+        return join("\n", $this->getFinalResult());
     }
 
     /**
@@ -42,12 +35,36 @@ class XDocument implements XDocumentInterface {
         $this->result[] = $text;
     }
 
-    /**
-     * @return string
-     */
-    protected function convert(array $result)
+    public function getIterator()
     {
-        return join("\n", $result);
+        return new \ArrayIterator($this->result);
+    }
+
+    public function isEmpty()
+    {
+        return !count($this->result);
+    }
+
+    /**
+     * @return array
+     */
+    protected function getFinalResult()
+    {
+        $result = [];
+
+        foreach ($this->result as $item) {
+
+            if ($item instanceof XDocumentInterface) {
+                if (!$item->isEmpty()) {
+                    $result[] = $item;
+                }
+            } else {
+                $result[] = $item;
+            }
+
+        }
+
+        return $result;
     }
 
 

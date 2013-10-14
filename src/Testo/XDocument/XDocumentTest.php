@@ -18,7 +18,7 @@ class XDocumentTest extends \PHPUnit_Framework_TestCase {
         $this->assertSame($source, $document->getSource());
 
         $document = new XDocument();
-        $this->assertSame('', $document->getSource()->getContent());
+        $this->assertNull($document->getSource());
     }
 
     /**
@@ -27,8 +27,7 @@ class XDocumentTest extends \PHPUnit_Framework_TestCase {
     public function constructWithoutArguments()
     {
         $document = new XDocument();
-        $this->assertTrue($document->getSource() instanceof XStringSource);
-        $this->assertSame('', $document->getSource()->getContent());
+        $this->assertNull($document->getSource());
     }
 
     /**
@@ -77,5 +76,42 @@ class XDocumentTest extends \PHPUnit_Framework_TestCase {
 
         $this->assertSame("xxx\nxxx2", (string)$document);
 
+        // ignore empty documents
+        $sub_document2 = new XDocument($source);
+        $document->add($sub_document2);
+        $this->assertSame("xxx\nxxx2", (string)$document);
+
+
     }
+
+    /**
+     * @test
+     */
+    public function getIterator()
+    {
+        $source = $this->getMock('\Testo\XSource\XSourceInterface');
+        $document = new XDocument($source);
+
+        $this->assertEquals(0, $document->getIterator()->count());
+
+        $document->add('xxx');
+        $this->assertEquals(1, $document->getIterator()->count());
+    }
+
+    /**
+     * @test
+     */
+    public function isEmptyDocument()
+    {
+        $source = $this->getMock('\Testo\XSource\XSourceInterface');
+        $document = new XDocument($source);
+
+        $this->assertTrue($document->isEmpty());
+        $document->add('xxx');
+        $this->assertFalse($document->isEmpty());
+
+    }
+    
+
+    
 }
