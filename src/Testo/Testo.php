@@ -254,13 +254,12 @@ class Testo implements RootDirAwareInterface
      */
     public function xGenerate($documentFile)
     {
-        $document = new XDocument(new XFileSource($documentFile));
 
         $builder = new XCompositeDocumentBuilder();
         $builder->addBuilder(new XDocumentBuilder());
         $builder->addBuilder(new XMethodSourceBuilder());
 
-
+        $document = new XDocument(new XFileSource($documentFile));
         $builder->build($document);
 
         $this->x_document = $document;

@@ -113,6 +113,36 @@ class XDocumentBuilderTest extends \PHPUnit_Framework_TestCase {
     }
 
     /**
+     * @test
+     */
+    public function buildNestedTestoBlock()
+    {
+
+        $base_builder = new XCompositeDocumentBuilder();
+
+        $body = " some nested code ";
+        $nested_body = "\n some code \n@testo nested-block {\n{$body}\n@testo } \n ";
+        $content = "@testo some-block {\n{$nested_body}\n@testo }";
+
+        $doc = $this->newDocumentWithContent($content);
+
+        $builder = new XDocumentBuilder($base_builder);
+        $base_builder->addBuilder($builder);
+
+        $that = $this;
+
+        $doc->expects($this->at(1))
+            ->method('add')
+            ->will($this->returnCallback(function($doc) use ($that, $content, $nested_body) {
+                $that->assertSame($nested_body, $doc->getSource()->getContent());
+                $that->assertSame("\n some code \n some nested code \n ", (string)$doc);
+            }));
+
+        $builder->build($doc);
+
+    }
+
+    /**
      * @param $content
      * @return \PHPUnit_Framework_MockObject_MockObject
      */

@@ -60,6 +60,7 @@ class XDocumentBuilder implements XDocumentBuilderInterface, XAwareBaseDocumentB
     {
 
         $block_mode = false;
+        $block_counter = 0;
         $block_tag = null;
         $block = [];
 
@@ -71,7 +72,15 @@ class XDocumentBuilder implements XDocumentBuilderInterface, XAwareBaseDocumentB
 
                 if ($tag->isStartBlock()) {
                     $block_mode = true;
-                    $block_tag = $tag;
+
+                    if (!$block_counter) {
+                        $block_tag = $tag;
+                    }
+                    else{
+                        $block[] = $line;
+                    }
+
+                    $block_counter++;
                 }
 
 
@@ -82,6 +91,13 @@ class XDocumentBuilder implements XDocumentBuilderInterface, XAwareBaseDocumentB
                 }
 
                 if ($tag->isEndBlock()) {
+                    $block_counter--;
+                    if ($block_counter) {
+                        $block[] = $line;
+                    }
+                }
+
+                if ($block_mode && !$block_counter) {
 
                     $doc = new XTagDocument(
                         $block_tag,
