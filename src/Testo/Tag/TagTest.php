@@ -85,4 +85,34 @@ class TagTest extends \PHPUnit_Framework_TestCase {
         $this->assertSame($content, (string)$tag);
     }
 
+    /**
+     * @test
+     */
+    public function getArgument()
+    {
+        $content = '@testo arg1 arg2';
+        $tag = new Tag($content);
+        $this->assertSame('arg1', $tag->getArgument(0));
+        $this->assertSame('arg2', $tag->getArgument(1));
+        $this->assertNull($tag->getArgument(100));
+    }
+
+    /**
+     * @test
+     */
+    public function matchArgument()
+    {
+        $content = '@testo aaa bbb';
+        $tag = new Tag($content);
+
+        $this->assertTrue($tag->matchArgument(0));
+        $this->assertTrue($tag->matchArgument(0, '/a+/'));
+
+        $this->assertFalse($tag->matchArgument(1, '/a+/'));
+
+        $this->assertTrue($tag->matchArgument(1, '/b+/'));
+
+        $this->assertFalse($tag->matchArgument(101));
+    }
+
 }

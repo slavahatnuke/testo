@@ -17,8 +17,11 @@ interface TagInterface
 
     public function isBlock();
 
-
     public function getContent();
+
+    public function getArgument($index);
+
+    public function matchArgument($index, $regexp = '/.*/');
 
     public function __toString();
 

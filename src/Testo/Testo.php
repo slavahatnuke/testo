@@ -13,6 +13,7 @@ use Testo\Source\SourceInterface;
 use Testo\XDocument\XDocument;
 use Testo\XDocumentBuilder\XCompositeDocumentBuilder;
 use Testo\XDocumentBuilder\XDocumentBuilder;
+use Testo\XDocumentBuilder\XMethodSourceBuilder;
 use Testo\XSource\XFileSource;
 
 class Testo implements RootDirAwareInterface
@@ -257,7 +258,7 @@ class Testo implements RootDirAwareInterface
 
         $builder = new XCompositeDocumentBuilder();
         $builder->addBuilder(new XDocumentBuilder());
-//        $builder->addBuilder(new XMethodSourceDocumentBuilder());
+        $builder->addBuilder(new XMethodSourceBuilder());
 
 
         $builder->build($document);

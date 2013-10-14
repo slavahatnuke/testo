@@ -7,6 +7,8 @@ class Tag implements TagInterface
 {
     protected $content;
 
+    protected $arguments;
+
     static protected $testo_tag = '/@testo\s+(.*)/';
 
     static protected $testo_start_block = '/@testo.*?{/';
@@ -28,6 +30,7 @@ class Tag implements TagInterface
     {
         return preg_match(self::$testo_start_block, $this->content) ? true : false;
     }
+
 
     /**
      * @param $text
@@ -56,5 +59,27 @@ class Tag implements TagInterface
     {
         return $this->getContent();
     }
+
+    public function getArgument($index)
+    {
+        $this->defineArguments();
+        return array_key_exists($index, $this->arguments) ? $this->arguments[$index] : null;
+    }
+
+    public function matchArgument($index, $regexp = '/.*/')
+    {
+        $argument = $this->getArgument($index);
+        return !is_null($argument) && preg_match($regexp, $argument);
+    }
+
+    protected function defineArguments()
+    {
+        if (!$this->arguments) {
+            $a = [];
+            preg_match(self::$testo_tag, $this->getContent(), $a);
+            $this->arguments = preg_split('/\s+/', $a[1]);
+        }
+    }
+
 
 }

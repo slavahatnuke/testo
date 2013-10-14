@@ -5,7 +5,7 @@ namespace Testo\XDocument;
 use Testo\Tag\TagInterface;
 use Testo\XSource\XSourceInterface;
 
-class XTagDocument extends XDocument
+class XTagDocument extends XDocument implements XTagDocumentInterface
 {
 
     /**
