@@ -25,10 +25,27 @@ class XMethodSource implements XSourceInterface
     public function getContent()
     {
         try {
-            return $this->getMethodCode(new \ReflectionMethod($this->class, $this->method));
+            return $this->unShiftCode($this->getMethodCode(new \ReflectionMethod($this->class, $this->method)));
         } catch (\ReflectionException $e) {
             throw new SourceNotFoundException('Method is not found: ' . $this->class . '::' . $this->method);
         }
+    }
+    /**
+     * @param string $code
+     *
+     * @return string
+     */
+    protected function unShiftCode($code)
+    {
+        $code = trim($code, "\n") . "\n";
+        $placeholders = array();
+
+        if (preg_match('/^(\s*?)[^\s]/', $code, $placeholders)) {
+            $code = preg_replace("/^$placeholders[1]/", '', $code);
+            $code = str_replace("\n$placeholders[1]", "\n", $code);
+        }
+
+        return $code;
     }
 
     /**

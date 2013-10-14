@@ -13,9 +13,7 @@ class XMethodSourceTest extends \PHPUnit_Framework_TestCase
     {
         $source = new XMethodSource('Testo\Tests\x_files\Example', 'helloWorld');
 
-        $this->assertSame('        $helloWorld = new \HelloWorld;
-
-        $helloWorld->say();', $source->getContent());
+        $this->assertSame('$helloWorld = new \HelloWorld;' . "\n\n" . '$helloWorld->say();' . "\n" , $source->getContent());
 
     }
 

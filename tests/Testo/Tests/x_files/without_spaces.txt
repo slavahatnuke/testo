@@ -4,5 +4,6 @@ Some text
 $helloWorld = new \HelloWorld;
 
 $helloWorld->say();
+
 Some text
 Some text
